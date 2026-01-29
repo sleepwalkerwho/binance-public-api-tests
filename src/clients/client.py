@@ -21,3 +21,6 @@ class BinanceAPIClient():
     
     def ping(self):
         return self._request("GET", "/api/v3/ping", params=None)
+    
+    def time(self):
+        return self._request("GET", "/api/v3/time", params=None)
