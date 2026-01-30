@@ -24,3 +24,6 @@ class BinanceAPIClient():
     
     def time(self):
         return self._request("GET", "/api/v3/time", params=None)
+    
+    def exchange_info(self, params):
+        return self._request("GET", "/api/v3/exchangeInfo", params=params)

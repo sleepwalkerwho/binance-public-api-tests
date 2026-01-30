@@ -30,3 +30,30 @@ def test_time_is_increasing(binance_client):
     t4 = binance_client.time().json()["serverTime"]
 
     assert t1 < t2 < t3 < t4, "Время в serverTime не увеличивается"
+
+@pytest.mark.smoke
+def test_exchange_info_status_code_and_body_format(binance_client):
+    r = binance_client.exchange_info(params=None)
+    data = r.json()
+
+    assert r.status_code == 200, f"Unexpected status code: {r.status_code}, body={r.text}"
+    assert isinstance(data, dict), f"Unexpected data format. Expected: dict, result: {type(data)}"
+
+@pytest.mark.smoke
+def test_exchange_info_has_required_top_level_keys(binance_client):
+    r = binance_client.exchange_info(params=None)
+    data = r.json()
+
+    timezone = data["timezone"]
+    server_time = data["serverTime"]
+    rate_limits = data["rateLimits"]
+    exchange_filters = data["exchangeFilters"]
+    symbols = data["symbols"]
+
+    assert data.keys() == {'timezone', 'serverTime', 'rateLimits', 'exchangeFilters', 'symbols'}, f"Unexpected keys: {data.keys()}"
+    assert data["timezone"] == "UTC"
+    assert isinstance(timezone, str), f"Unexpected format for timezone. Expected: str, result: {type(timezone)}"
+    assert isinstance(server_time, int), f"Unexpected format for timezone. Expected: str, result: {type(timezone)}"
+    assert isinstance(rate_limits, list), f"Unexpected format for timezone. Expected: list, result: {type(rate_limits)}"
+    assert isinstance(exchange_filters, list), f"Unexpected format for timezone. Expected: list, result: {type(exchange_filters)}"
+    assert isinstance(symbols, list), f"Unexpected format for timezone. Expected: list, result: {type(symbols)}"
